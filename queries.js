@@ -1,6 +1,6 @@
 exports.loginQuery = function(email, password) {
   return (
-    "SELECT email, password FROM users WHERE email = '" +
+    "SELECT userid, email, password FROM users WHERE email = '" +
     email +
     "' AND password = '" +
     password +
@@ -22,6 +22,16 @@ exports.registerQuery = function(email, password, fullname, username) {
     fullname +
     "', '" +
     username +
+    "')"
+  );
+};
+
+exports.sessionCreateQuery = function(userid, sessionid) {
+  return (
+    "REPLACE into sessions (userid,session_id) VALUES ('" +
+    userid +
+    "', '" +
+    sessionid +
     "')"
   );
 };
