@@ -12,7 +12,10 @@ var generate_key = function(userid) {
 var app = express();
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,HEAD,OPTIONS,POST,PUT,DELETE"
+  );
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
@@ -23,11 +26,26 @@ app.use(function(req, res, next) {
 app.use(express.json());
 app.use(express.urlencoded());
 
+app.delete("/logout", function(req, res) {
+  database.query(queries.logoutUser(req.body.sessionid), function(
+    error,
+    result
+  ) {
+    if (error) {
+      console.log(error);
+      res.send("Error logging out!");
+    } else {
+      res.send("LoggedOut user!");
+    }
+  });
+});
+
 app.post("/login", function(req, res) {
-  loginFirst(req, function(error, result, sessionId) {
+  var callbackLogin = function(error, result, sessionId) {
     if (error) {
       // for database error
-      res.send("Error in database connection! ");
+      var successLogin = { message: "Failed to login!" };
+      res.send(JSON.stringify(successLogin));
     } else {
       // for database success
       if (sessionId) {
@@ -35,6 +53,7 @@ app.post("/login", function(req, res) {
         res.send(JSON.stringify(successLogin));
       } else {
         if (result) {
+          console.log(JSON.stringify(result));
           res.send("Not a valid email user" + req.body.email);
         } else {
           var successLogin = { message: "Failed to create session" };
@@ -42,36 +61,36 @@ app.post("/login", function(req, res) {
         }
       }
     }
-  });
+  };
+  loginFirst(req, callbackLogin);
 });
 
 function loginFirst(req, callbackLogin) {
+  var loginCallback = function(error, result) {
+    if (result.length > 0) {
+      console.log("result is " + JSON.stringify(result));
+      let userId = result[0].userid;
+      createSession(userId, callbackLogin);
+    } else {
+      callbackLogin(error, result, null);
+    }
+  };
   database.query(
     queries.loginQuery(req.body.email, req.body.password),
-    function(error, result) {
-      if (result.length > 0) {
-        console.log("result is " + JSON.stringify(result));
-        let userId = result[0].userid;
-        createSession(userId, callbackLogin);
-      } else {
-        callbackLogin(error, result, null);
-      }
-    }
+    loginCallback
   );
 }
 
 function createSession(userid, callbackLogin) {
   var sessionId = generate_key(userid);
-  database.query(queries.sessionCreateQuery(userid, sessionId), function(
-    error,
-    result
-  ) {
+  var queryResponse = function(error, result) {
     if (error) {
       callbackLogin(error, result, null);
     } else {
       callbackLogin(error, result, sessionId);
     }
-  });
+  };
+  database.query(queries.sessionCreateQuery(userid, sessionId), queryResponse);
 }
 
 app.post("/register", function(req, res) {

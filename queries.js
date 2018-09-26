@@ -35,3 +35,7 @@ exports.sessionCreateQuery = function(userid, sessionid) {
     "')"
   );
 };
+
+exports.logoutUser = function(sessionid) {
+  return "DELETE from sessions WHERE session_id = '" + sessionid + "'";
+};
