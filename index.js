@@ -140,14 +140,7 @@ function checkIfUserExists(email, callback) {
   });
 }
 
-if (module === require.main) {
-  // [START server]
-  // Start the server
-  const server = app.listen(process.env.PORT || 8080, () => {
-    const port = server.address().port;
-    console.log(`App listening on port ${port}`);
-  });
-  // [END server]
-}
-
-module.exports = app;
+var server = app.listen(5000, () => {
+  const port = server.address().port;
+  console.log(`App listening on port ${port}`);
+});
