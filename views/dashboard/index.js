@@ -13,7 +13,7 @@ function checkIfLoggedin() {
 
 function onLogout() {
   var request = new XMLHttpRequest();
-  var url = new URL("http://localhost:5000/logout");
+  var url = new URL("https://polar-dawn-18247.herokuapp.com/logout");
   request.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       alert(this.responseText);
