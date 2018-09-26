@@ -6,8 +6,8 @@ function checkIfLoggedin() {
   var sessionid = Lockr.get("sessionid");
 
   if (sessionid) {
-    window.location.href = "../view/dashboard/index.html";
+    window.location.href = "../views/dashboard/index.html";
   } else {
-    window.location.href = "../view/login/index.html";
+    window.location.href = "../views/login/index.html";
   }
 }

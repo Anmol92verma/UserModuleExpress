@@ -20,7 +20,7 @@ function onLogin() {
 
   var request = new XMLHttpRequest();
 
-  var url = new URL("http://localhost:5000/login");
+  var url = new URL("https://polar-dawn-18247.herokuapp.com/login");
   request.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       Lockr.set("sessionid", JSON.parse(this.responseText).session);
