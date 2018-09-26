@@ -3,9 +3,9 @@ var database = require("./database");
 var queries = require("./queries");
 var crypto = require("crypto");
 
-var generate_key = function() {
+var generate_key = function(userid) {
   var sha = crypto.createHash("sha256");
-  sha.update(Math.random().toString());
+  sha.update(userid.toString());
   return sha.digest("hex");
 };
 
@@ -61,7 +61,7 @@ function loginFirst(req, callbackLogin) {
 }
 
 function createSession(userid, callbackLogin) {
-  var sessionId = generate_key();
+  var sessionId = generate_key(userid);
   database.query(queries.sessionCreateQuery(userid, sessionId), function(
     error,
     result
