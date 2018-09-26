@@ -2,8 +2,6 @@ var express = require("express");
 var database = require("./database");
 var queries = require("./queries");
 var crypto = require("crypto");
-const PORT = process.env.PORT || 5000;
-const path = require("path");
 
 var generate_key = function(userid) {
   var sha = crypto.createHash("sha256");
@@ -142,9 +140,14 @@ function checkIfUserExists(email, callback) {
   });
 }
 
-app
-  .use(express.static(path.join(__dirname, "public")))
-  .set("views", path.join(__dirname, "views"))
-  .set("view engine", "ejs")
-  .get("/", (req, res) => res.render("pages/index"))
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+if (module === require.main) {
+  // [START server]
+  // Start the server
+  const server = app.listen(process.env.PORT || 8080, () => {
+    const port = server.address().port;
+    console.log(`App listening on port ${port}`);
+  });
+  // [END server]
+}
+
+module.exports = app;
