@@ -3,6 +3,7 @@ var database = require("./database");
 var queries = require("./queries");
 var crypto = require("crypto");
 const PORT = process.env.PORT || 5000;
+const path = require("path");
 
 var generate_key = function(userid) {
   var sha = crypto.createHash("sha256");
@@ -141,4 +142,8 @@ function checkIfUserExists(email, callback) {
   });
 }
 
-app.listen(PORT);
+app
+  .use(express.static(path.join(__dirname, "public")))
+  .set("views", path.join(__dirname, "views"))
+  .get("/", (req, res) => res.render("index.html"))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
