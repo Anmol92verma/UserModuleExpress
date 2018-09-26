@@ -2,6 +2,7 @@ var express = require("express");
 var database = require("./database");
 var queries = require("./queries");
 var crypto = require("crypto");
+const PORT = process.env.PORT || 5000;
 
 var generate_key = function(userid) {
   var sha = crypto.createHash("sha256");
@@ -140,4 +141,4 @@ function checkIfUserExists(email, callback) {
   });
 }
 
-app.listen(5000);
+app.listen(PORT);
